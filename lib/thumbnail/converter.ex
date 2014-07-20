@@ -23,7 +23,10 @@ defmodule Thumbnail.Converter do
   writing a new image at path `dst`.
   """
   def convert(src, dst, geometry) do
-    cmd = ~s(convert "#{src}" -resize "#{geometry}" "#{dst}")
-    System.cmd(cmd)
+    args = ["#{src}", "-resize", "#{geometry}", "#{dst}"]
+    case System.cmd("convert", args, stderr_to_stdout: true) do
+      {_,0} -> :ok
+      {msg, 1} -> {:error, msg}
+    end
   end
 end
